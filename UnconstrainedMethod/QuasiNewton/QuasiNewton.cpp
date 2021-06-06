@@ -1,4 +1,5 @@
 ﻿#include <Msnhnet/math/MsnhMatrixS.h>
+#include <Msnhnet/cv/MsnhCVGui.h>
 #include <iostream>
 
 using namespace Msnhnet;
@@ -57,6 +58,10 @@ public:
         return true;
     }
 
+    const std::vector<Vec2F32> &getXStep() const
+    {
+        return _xStep;
+    }
 
 protected:
     int _maxIter = 100;
@@ -66,7 +71,7 @@ protected:
     Method _method;
     bool _firstStep = false;
     MatSDS _Dk;
-
+    std::vector<Vec2F32> _xStep;
 protected:
     virtual MatSDS calGradient(const MatSDS& point) = 0;
     virtual MatSDS function(const MatSDS& point) = 0;
@@ -110,7 +115,7 @@ public:
 
         for (int i = 0; i < _maxIter; ++i)
         {
-
+            _xStep.push_back({(float)x[0],(float)x[1]});
             MatSDS J = calGradient(x);
 
             if(_firstStep)
@@ -199,6 +204,13 @@ int main()
 
             std::cout<<"此时方程的值为："<<std::endl;
             function.function(startPoint).print();
+
+#ifdef WIN32
+        Gui::setFont("c:/windows/fonts/MSYH.TTC",16);
+#endif
+        std::cout<<"按\"esc\"退出!"<<std::endl;
+        Gui::plotLine(u8"拟牛顿法X中间值","x",function.getXStep());
+        Gui::wait();
         }
 
     }

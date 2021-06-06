@@ -13,4 +13,4 @@
 - Constrained Methods
   - [ ] todo...
 ## Requirements
-- [Msnhnet Lib](https://github.com/msnh2012/Msnhnet)
+- [Msnhnet Lib ](https://github.com/msnh2012/Msnhnet)(Please set "BUILD_USE_MSNHCV_GUI" ON )

@@ -1,5 +1,6 @@
 ﻿#include <Msnhnet/math/MsnhMatrixS.h>
 #include <iostream>
+#include <Msnhnet/cv/MsnhCVGui.h>
 
 using namespace Msnhnet;
 
@@ -7,7 +8,6 @@ class Newton
 {
 public:
     Newton(int maxIter, double eps):_maxIter(maxIter),_eps(eps){}
-
 
     void setMaxIter(int maxIter)
     {
@@ -36,9 +36,15 @@ public:
          return true;
     }
 
+    const std::vector<Vec2F32> &getXStep() const
+    {
+        return _xStep;
+    }
+
 protected:
     int _maxIter = 100;
     double _eps = 0.00001;
+    std::vector<Vec2F32> _xStep;
 
 protected:
     virtual MatSDS calGradient(const MatSDS& point) = 0;
@@ -108,6 +114,9 @@ public:
         MatSDS x = startPoint;
         for (int i = 0; i < _maxIter; ++i)
         {
+
+            _xStep.push_back({(float)x[0],(float)x[1]});
+
             MatSDS dk;
 
             bool ok = calDk(x, dk);
@@ -156,6 +165,13 @@ int main()
 
             std::cout<<"此时方程的值为："<<std::endl;
             function.function(startPoint).print();
+
+#ifdef WIN32
+        Gui::setFont("c:/windows/fonts/MSYH.TTC",16);
+#endif
+        std::cout<<"按\"esc\"退出!"<<std::endl;
+        Gui::plotLine(u8"牛顿法X中间值","x",function.getXStep());
+        Gui::wait();
         }
 
     }
