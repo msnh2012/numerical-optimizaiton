@@ -17,3 +17,7 @@ add_subdirectory(UnconstrainedMethod/Newton)
 add_subdirectory(UnconstrainedMethod/DampedNewton)
 add_subdirectory(UnconstrainedMethod/NewtonLM)
 add_subdirectory(UnconstrainedMethod/QuasiNewton)
+
+
+add_subdirectory(NonlinearLeastSquaresProblems/GuassNewton)
+add_subdirectory(NonlinearLeastSquaresProblems/LevenbergMarquardt)

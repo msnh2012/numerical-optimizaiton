@@ -170,7 +170,7 @@ int main()
         Gui::setFont("c:/windows/fonts/MSYH.TTC",16);
 #endif
         std::cout<<"按\"esc\"退出!"<<std::endl;
-        Gui::plotLine(u8"牛顿法X中间值","x",function.getXStep());
+        Gui::plotLine(u8"牛顿法迭代X中间值","x",function.getXStep());
         Gui::wait();
         }
 

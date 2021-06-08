@@ -8,9 +8,9 @@
   - [x] Newton Levenberg Marquardt 
   - [x] Quasi Newton (DFP/BFGS Armijo)
 - Nonlinear Least Squares Problems
-  - [ ] Guass Newton
-  - [ ] Guass Newton Levenberg Marquardt
+  - [x] Gauss Newton
+  - [x] Levenberg Marquardt
 - Constrained Methods
   - [ ] todo...
 ## Requirements
-- [Msnhnet Lib ](https://github.com/msnh2012/Msnhnet)(Please set "BUILD_USE_MSNHCV_GUI" ON )
+- [Msnhnet Lib ](https://github.com/msnh2012/Msnhnet)(Please set "BUILD_USE_MSNHCV_GUI" ON  && check out the newest version)
