@@ -3,10 +3,10 @@
 
 using namespace Msnhnet;
 
-class LevenbergMarquardtProblem
+class LevenbergMarquardtProblemSmallJac
 {
 public:
-    LevenbergMarquardtProblem(int maxIter, double eps, const Mat& x, const Mat& y):_maxIter(maxIter),_eps(eps),_x(x),_y(y){}
+    LevenbergMarquardtProblemSmallJac(int maxIter, double eps, const Mat& x, const Mat& y):_maxIter(maxIter),_eps(eps),_x(x),_y(y){}
 
     void setMaxIter(int maxIter)
     {
@@ -28,23 +28,22 @@ public:
         _y = y;
     }
 
-    Mat calJacobian(const double &a, const double&b)
+    Mat calJacobian(const double &a, const double&b, const double&x)
     {
         double eps = 1e-6;
 
-        Mat gradA = (function(a + eps,b) - function(a - eps,b))/(2*eps);
-        Mat gradB = (function(a,b + eps) - function(a,b- eps))/(2*eps);
+        double gradA = (function(a + eps,b,x) - function(a - eps,b,x))/(2*eps);
+        double gradB = (function(a,b + eps,x) - function(a,b- eps, x))/(2*eps);
 
-        Mat J(2,_x.getHeight(),MAT_GRAY_F64);
+        Mat J(1,2,MAT_GRAY_F64);
 
-        J.setColS_(0, gradA);
-        J.setColS_(1, gradB);
+        J.setListData<double>({gradA,gradB});
         return J;
     }
 
-    Mat function(const double &a, const double&b)
+    double function(const double &a, const double&b, const double&x)
     {
-        return Mat::eleWiseDiv(a*_x, (b+_x));
+        return a*x/(b+x);
     }
 
     std::vector<double> function(const double &a, const double&b, const std::vector<double>& x)
@@ -71,26 +70,47 @@ public:
             double a = point.getPixel<double>({0,0});
             double b = point.getPixel<double>({0,1});
 
-            Mat J  = calJacobian(a,b);
+            Mat H(2,2,MAT_GRAY_F64);
+            Mat Jfx(1,2,MAT_GRAY_F64);
+            Mat J(1,2,MAT_GRAY_F64);
 
-            Mat fx = function(a,b);
 
-            Mat dy = fx - _y;
+            for (int j = 0; j < _x.getHeight(); ++j)
+            {
+                double x  = _x.getFloat64()[j];
 
-            Mat A = J.transpose()*J;
+                Mat J_ = calJacobian(a,b,x);
+
+                J = J + J_;
+
+                double fx = function(a,b,x) -  _y.getFloat64()[j];
+
+                H   = H  + J_*J_.transpose();
+                Jfx = Jfx + J_*fx;
+            }
 
             if(i == 0)
             {
-                std::vector<double> diag = A.getDiagList<double>();
+                std::vector<double> diag = H.getDiagList<double>();
                 _u = ExVector::max<double>(diag);
             }
 
-            Mat dk = -(A + _u*eye).pseudoInvert()*J.transpose()*dy;
+            Mat dk = -(H + _u*eye).pseudoInvert()*Jfx;
 
             double da = dk.getPixel<double>({0,0});
             double db = dk.getPixel<double>({0,1});
 
-            double rho = (function(a+da,b+db) - fx).norm(NormType::NORM_L2)/((J*dk).norm(NormType::NORM_L2));//????
+            double errNorm = 0;
+
+            for (int j = 0; j < _x.getHeight(); ++j)
+            {
+                double x  = _x.getFloat64()[j];
+                double dt = function(a+da,b+db,x) - function(a,b,x);
+                errNorm = errNorm + sqrt(dt*dt);
+            }
+
+            double rho = errNorm/((J.transpose()*dk).norm(NormType::NORM_L2));//????
+
             if(rho > 0)
             {
                 double t = 2*rho - 1;
@@ -121,7 +141,6 @@ private:
     Mat _y;
 };
 
-
 // y = a*x/(b+x)
 int main()
 {
@@ -144,7 +163,7 @@ int main()
     Gui::setFont("c:/windows/fonts/MSYH.TTC",16);
 #endif
     std::cout<<"按\"esc\"退出!"<<std::endl;
-    Gui::plotPoints(u8"LM法",u8"数据",datas);
+    Gui::plotPoints(u8"LM小雅克比法",u8"数据",datas);
 
 
     Mat matX(1,x.size(),MAT_GRAY_F64);
@@ -153,7 +172,7 @@ int main()
     Mat matY(1,y.size(),MAT_GRAY_F64);
     matY.setListData<double>(y);
 
-    LevenbergMarquardtProblem fun(100,0.00001,matX,matY);
+    LevenbergMarquardtProblemSmallJac fun(100,0.00001,matX,matY);
 
     Mat startPoint(1,2,MAT_GRAY_F64);
     startPoint.setListData<double>({5,1});
@@ -174,7 +193,7 @@ int main()
     {
         datas.push_back(Vec2F32(xTest[i],yTest[i]));
     }
-    Gui::plotLine(u8"LM法",u8"拟合曲线",datas);
+    Gui::plotLine(u8"LM小雅克比法",u8"拟合曲线",datas);
     Gui::wait();
 
 }

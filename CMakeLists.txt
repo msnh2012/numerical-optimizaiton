@@ -20,4 +20,6 @@ add_subdirectory(UnconstrainedMethod/QuasiNewton)
 
 
 add_subdirectory(NonlinearLeastSquaresProblems/GuassNewton)
+add_subdirectory(NonlinearLeastSquaresProblems/GuassNewtonSmallJac)
 add_subdirectory(NonlinearLeastSquaresProblems/LevenbergMarquardt)
+add_subdirectory(NonlinearLeastSquaresProblems/LevenbergMarquardtSmallJac)
