@@ -9,7 +9,9 @@
   - [x] Quasi Newton (DFP/BFGS Armijo)
 - Nonlinear Least Squares Problems
   - [x] Gauss Newton
+  - [x] Gauss Newton Small Jacobian
   - [x] Levenberg Marquardt
+  - [x] Levenberg Marquardt Small Jacobian
 - Constrained Methods
   - [ ] todo...
 ## Requirements
