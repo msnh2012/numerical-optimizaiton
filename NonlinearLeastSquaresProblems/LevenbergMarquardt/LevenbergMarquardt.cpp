@@ -104,10 +104,12 @@ public:
                 _v = 2*_v;
             }
 
+            std::cout<<std::left<<"Iter(s): "<<std::setw(4)<<i<<", Loss: "<<std::setw(12)<<(pointNew-point).norm(NormType::NORM_L2)<<std::endl;
+
             if((pointNew-point).norm(NormType::NORM_L2) < _eps)
             {
                 point = pointNew;
-                return i;
+                return i + 1;
             }
         }
     }

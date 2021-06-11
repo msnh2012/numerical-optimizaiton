@@ -126,10 +126,13 @@ public:
 
             MatSDS dk = -1*_Dk.invert()*J;
 
+            std::cout<<std::left<<"Iter(s): "<<std::setw(4)<<i<<", Loss: "<<std::setw(12)<<dk.L2()<<" Result: "<<function(x)[0]<<std::endl;
+
+
             if(dk.LInf() < _eps)
             {
                 startPoint = x;
-                return i;
+                return i+1;
             }
 
             double alpha = 1;

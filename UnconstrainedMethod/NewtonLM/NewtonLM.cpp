@@ -159,12 +159,14 @@ public:
                 alpha = alpha * _tau;
             }
 
+            std::cout<<std::left<<"Iter(s): "<<std::setw(4)<<i<<", Loss: "<<std::setw(12)<<dk.L2()<<" Result: "<<function(x)[0]<<std::endl;
+
             x = x + alpha*dk;
 
             if(dk.LInf() < _eps)
             {
                 startPoint = x;
-                return i;
+                return i+1;
             }
         }
 
@@ -177,7 +179,7 @@ public:
 int main()
 {
     NewtonLMProblem1 function(1000, 0.001,3, 0.4, 0.8);
-    MatSDS startPoint(1,2,{0,3});
+    MatSDS startPoint(1,2,{4,3});
 
     try
     {

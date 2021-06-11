@@ -153,12 +153,14 @@ public:
                 alpha = alpha * _tau;
             }
 
+            std::cout<<std::left<<"Iter(s): "<<std::setw(4)<<i<<", Loss: "<<std::setw(12)<<dk.L2()<<" Result: "<<function(x)[0]<<std::endl;
+
             x = x + alpha*dk;
 
             if(dk.LInf() < _eps)
             {
                 startPoint = x;
-                return i;
+                return i+1;
             }
         }
 

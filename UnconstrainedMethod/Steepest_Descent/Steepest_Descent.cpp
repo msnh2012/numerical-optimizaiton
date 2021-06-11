@@ -51,8 +51,12 @@ public:
     {
         MatSDS dk(1,2);
         // df(x) = (2x_1,2x_2)^T
-        dk(0,0) = 2*point(0,0);
-        dk(0,1) = 2*point(0,1);
+        double x1 = point(0,0);
+        double x2 = point(0,1);
+
+        dk(0,0) = 6*x1 - 2*x1*x2;
+        dk(0,1) = 6*x2 - x1*x1;
+
         dk = -1*dk;
         return dk;
     }
@@ -63,7 +67,7 @@ public:
         double x1 = point(0,0);
         double x2 = point(0,1);
 
-        f(0,0) = x1*x1 + x2*x2;
+        f(0,0) = 3*x1*x1 + 3*x2*x2 - x1*x1*x2;
 
         return f;
     }
@@ -76,10 +80,12 @@ public:
             _xStep.push_back({(float)x[0],(float)x[1]});
             MatSDS dk = calGradient(x);
 
+            std::cout<<std::left<<"Iter(s): "<<std::setw(4)<<i<<", Loss: "<<std::setw(12)<<dk.L2()<<" Result: "<<function(x)[0]<<std::endl;
+
             if(dk.L2() < _eps)
             {
                 startPoint = x;
-                return i;
+                return i+1;
             }
             x = x + _learningRate*dk;
         }
@@ -93,7 +99,7 @@ public:
 int main()
 {
     NewtonProblem1 function(0.1, 100, 0.001);
-    MatSDS startPoint(1,2,{1,3});
+    MatSDS startPoint(1,2,{1.5,1.5});
     int res = function.solve(startPoint);
     if(res < 0)
     {
